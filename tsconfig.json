@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "paths": {
+      "@entities/*": [
+        "core/entities/*"
+      ],
+      "@dtos/*": [
+        "core/dtos/*"
+      ],
+      "@useCases/*": [
+        "core/useCases/*"
+      ],
+      "@repositories/*": [
+        "core/repositories/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@middlewares/*":[
+        "middlewares/*"
+      ],
+      "@providers/*": [
+        "core/providers/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@errors/*":[
+        "shared/errors/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@infra/*":[
+        "infra/*"
+      ]
+    }
+  },
+  "include": [
+    "./src"
+  ]
+}
