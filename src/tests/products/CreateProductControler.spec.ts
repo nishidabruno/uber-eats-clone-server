@@ -1,9 +1,11 @@
+import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
 import { createTypeormConnection } from '@config/typeorm';
 import { HashProvider } from '@infra/container/providers/HashProvider';
 import { TokenProvider } from '@infra/container/providers/TokenProvider';
+import { StoresCoordinateRepository } from '@infra/database/typeorm/repositories/StoresCoodinateRepository';
 import { StoresRepository } from '@infra/database/typeorm/repositories/StoresRepository';
 import { UsersRepository } from '@infra/database/typeorm/repositories/UsersRepository';
 import { app } from '@infra/http/app';
@@ -13,6 +15,7 @@ let connection: Connection;
 
 let usersRepository: UsersRepository;
 let storesRepository: StoresRepository;
+let storesCoordinatesRepository: StoresCoordinateRepository;
 let authenticateUserUseCase: AuthenticateUserUseCase;
 let hashProvider: HashProvider;
 let tokenProvider: TokenProvider;
@@ -24,6 +27,7 @@ describe('CreateProductController', () => {
 
     usersRepository = new UsersRepository();
     storesRepository = new StoresRepository();
+    storesCoordinatesRepository = new StoresCoordinateRepository();
     hashProvider = new HashProvider();
     tokenProvider = new TokenProvider();
     authenticateUserUseCase = new AuthenticateUserUseCase(
@@ -44,17 +48,18 @@ describe('CreateProductController', () => {
       full_name: 'Valid name',
       email: 'valid@email.com',
       password: passwordHash,
-      avatar: 'http://valid-imgurl.com',
     });
 
     const user = await usersRepository.findByEmail('valid@email.com');
 
+    const storeCoordinates = await storesCoordinatesRepository.create({
+      longitude: 123,
+      latitude: 456,
+    });
+
     const store = await storesRepository.create({
       address: 'Valid address',
-      location: {
-        type: 'Point',
-        coordinates: [123, 456],
-      },
+      coordinates_id: storeCoordinates.id,
       delivery_fee: 0,
       delivery_time: 90,
       categories: [],
@@ -62,6 +67,7 @@ describe('CreateProductController', () => {
       opening_time_weekend: '8-17',
       opening_time_workweek: '8-18',
       user_id: user!.id,
+      image: 'valid image',
     });
 
     const { token } = await authenticateUserUseCase.execute({
@@ -72,13 +78,22 @@ describe('CreateProductController', () => {
     const response = await request(app)
       .post('/products')
       .set({ Authorization: `Bearer ${token}` })
-      .send({
-        name: 'Valid name',
-        description: 'Valid description',
-        store_id: store.id,
-        image: 'Valid image',
-        price: 100,
-      });
+      .attach(
+        'image',
+        path.resolve(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          'tmp',
+          'products',
+          'mc_fish.jpg'
+        )
+      )
+      .field('name', 'Valid name')
+      .field('description', 'Valid description')
+      .field('store_id', store.id)
+      .field('price', 100);
 
     expect(response.statusCode).toEqual(201);
     expect(response.body).toHaveProperty('id');
