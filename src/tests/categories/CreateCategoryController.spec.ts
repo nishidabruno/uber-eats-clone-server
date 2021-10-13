@@ -1,3 +1,4 @@
+import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
@@ -17,11 +18,22 @@ describe('CreateCategoryController', () => {
     await connection.close();
   });
 
+  const imagePath = path.resolve(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'tmp',
+    'products',
+    'mc_fish.jpg'
+  );
+
   it('should be able to create a new category', async () => {
-    const response = await request(app).post('/categories').send({
-      name: 'Valid category',
-      image: 'Valid image link',
-    });
+    const response = await request(app)
+      .post('/categories')
+      .attach('image', imagePath)
+      .field('name', 'Valid category')
+      .field('name', 'Valid category');
 
     expect(response.statusCode).toEqual(201);
     expect(response.body).toHaveProperty('id');
