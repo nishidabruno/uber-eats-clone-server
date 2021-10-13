@@ -1,15 +1,19 @@
 import { AppError } from '@errors/AppError';
+import { StorageProviderInMemory } from '@providers/in-memory/StorageProviderInMemory';
 import { CategoriesRepositoryInMemory } from '@repositories/in-memory/CategoriesRepositoryInMemory';
 import { CreateCategoryUseCase } from '@useCases/categories/CreateCategoryUseCase';
 
 let categoriesRepositoryInMemory: CategoriesRepositoryInMemory;
 let createCategoryUseCase: CreateCategoryUseCase;
+let storageProvider: StorageProviderInMemory;
 
 describe('CreateCategoryUseCase', () => {
   beforeEach(() => {
     categoriesRepositoryInMemory = new CategoriesRepositoryInMemory();
+    storageProvider = new StorageProviderInMemory();
     createCategoryUseCase = new CreateCategoryUseCase(
-      categoriesRepositoryInMemory
+      categoriesRepositoryInMemory,
+      storageProvider
     );
   });
 
