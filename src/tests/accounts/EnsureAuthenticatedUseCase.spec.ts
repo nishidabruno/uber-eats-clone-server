@@ -34,7 +34,6 @@ describe('EnsureAuthenticatedUseCase', () => {
       full_name: 'Valid name',
       email: 'validemail@email.com',
       password: hashPassword,
-      avatar: 'http://valid-imgurl.com',
     });
   });
 
