@@ -6,15 +6,9 @@ import { generateID } from '@utils/generateID';
 class UsersRepositoryInMemory implements IUsersRepository {
   users: IUser[] = [];
 
-  async create({
-    avatar,
-    email,
-    full_name,
-    password,
-  }: ICreateUserDTO): Promise<void> {
+  async create({ email, full_name, password }: ICreateUserDTO): Promise<void> {
     const newUser: IUser = {
       id: generateID(),
-      avatar,
       email,
       full_name,
       password,
