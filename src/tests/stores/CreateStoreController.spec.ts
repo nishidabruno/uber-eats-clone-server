@@ -1,3 +1,4 @@
+import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
@@ -45,7 +46,6 @@ describe('CreateStoreController', () => {
       full_name: 'Valid name',
       email: 'valid@email.com',
       password: passwordHash,
-      avatar: 'http://valid-imgurl.com',
     });
 
     const category = await categoriesRepository.create({
@@ -53,35 +53,43 @@ describe('CreateStoreController', () => {
       name: 'Valid category name',
     });
 
-    const user = await usersRepository.findByEmail('valid@email.com');
-
     const { token } = await authenticateUserUseCase.execute({
       email: 'valid@email.com',
       password: 'valid-password',
     });
 
+    const imagePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'tmp',
+      'products',
+      'mc_fish.jpg'
+    );
+    const jsonCoordinates = JSON.stringify({
+      longitude: 35.6847875,
+      latitude: 139.710875,
+    });
+    const jsonCategories = JSON.stringify([category.id]);
+
     const response = await request(app)
       .post('/stores')
       .set({ Authorization: `Bearer ${token}` })
-      .send({
-        address: 'Valid address',
-        location: {
-          long: 35.6847875,
-          lat: 139.710875,
-        },
-        delivery_fee: 0,
-        delivery_time: 90,
-        categories_id: [category.id],
-        name: 'Valid store name',
-        opening_time_weekend: '8-17',
-        opening_time_workweek: '8-18',
-        user_id: user?.id,
-      });
+      .attach('image', imagePath)
+      .field('address', 'Valid address')
+      .field('coordinates', jsonCoordinates)
+      .field('delivery_fee', 10)
+      .field('delivery_time', 30)
+      .field('name', 'Store name')
+      .field('opening_time_weekend', '8-5')
+      .field('opening_time_workweek', '8-5')
+      .field('categories_id', jsonCategories);
 
     expect(response.statusCode).toEqual(201);
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('categories');
     expect(response.body.categories[0]).toHaveProperty('id');
-    expect(response.body.location.coordinates).toHaveLength(2);
+    expect(response.body).toHaveProperty('coordinates_id');
   });
 });
