@@ -24,7 +24,6 @@ describe('AuthenticateUserUseCase', () => {
     // SETUP
     const hashPassword = await hashProvider.hash('123', 8);
     await usersRepositoryInMemory.create({
-      avatar: 'Valid avatar',
       email: 'valid@email.com',
       full_name: 'Valid name',
       password: hashPassword,
