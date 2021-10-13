@@ -4,7 +4,7 @@ interface IProduct {
   description: string;
   image: string;
   price: number;
-  store_id: string;
+  store_id?: string;
   created_at: Date;
   updated_at: Date;
 }
