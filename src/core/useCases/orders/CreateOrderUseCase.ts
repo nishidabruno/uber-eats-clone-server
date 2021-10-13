@@ -4,7 +4,6 @@ import { ICreateOrderDTO } from '@dtos/ICreateOrderDTO';
 import { IOrder } from '@entities/IOrder';
 import { AppError } from '@errors/AppError';
 import { IOrdersRepository } from '@repositories/IOrdersRepository';
-import { IProductsRepository } from '@repositories/IProductsRepository';
 import { IStoresRepository } from '@repositories/IStoresRepository';
 import { IUsersRepository } from '@repositories/IUsersRepository';
 
@@ -13,8 +12,6 @@ class CreateOrderUseCase {
   constructor(
     @inject('OrdersRepository')
     private ordersRepository: IOrdersRepository,
-    @inject('ProductsRepository')
-    private productsRepository: IProductsRepository,
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
     @inject('StoresRepository')
