@@ -19,12 +19,12 @@ class OrdersRepository implements IOrdersRepository {
     user_id,
     store_id,
   }: ICreateOrderDTO): Promise<IOrder> {
-    const aaa = this.repository.create({
+    const createOrderResult = this.repository.create({
       user_id,
       store_id,
       orderProducts,
     });
-    const order = await this.repository.save(aaa);
+    const order = await this.repository.save(createOrderResult);
 
     return order;
   }

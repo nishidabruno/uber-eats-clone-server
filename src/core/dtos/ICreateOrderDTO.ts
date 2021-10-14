@@ -1,9 +1,10 @@
-import { IOrderProduct } from '@entities/IOrderProduct';
-
 interface ICreateOrderDTO {
   user_id: string;
   store_id: string;
-  orderProducts: IOrderProduct[];
+  orderProducts: {
+    product_id: string;
+    quantity: number;
+  }[];
 }
 
 export { ICreateOrderDTO };

@@ -20,7 +20,6 @@ describe('CreateOrderUseCase', () => {
 
     createOrderUseCase = new CreateOrderUseCase(
       ordersRepositoryInMemory,
-      productsRepositoryInMemory,
       usersRepositoryInMemory,
       storesRepositoryInMemory
     );
@@ -31,7 +30,6 @@ describe('CreateOrderUseCase', () => {
       full_name: 'Valid name',
       email: 'validemail@email.com',
       password: 'valid-password',
-      avatar: 'http://valid-imgurl.com',
     });
 
     const user = await usersRepositoryInMemory.findByEmail(
@@ -40,10 +38,7 @@ describe('CreateOrderUseCase', () => {
 
     const store = await storesRepositoryInMemory.create({
       address: 'Valid address',
-      location: {
-        type: 'Point',
-        coordinates: [123, 456],
-      },
+      coordinates_id: '123',
       delivery_fee: 0,
       delivery_time: 90,
       categories: [],
@@ -51,6 +46,7 @@ describe('CreateOrderUseCase', () => {
       opening_time_weekend: '8-17',
       opening_time_workweek: '8-18',
       user_id: user!.id,
+      image: 'validImage',
     });
 
     const product = await productsRepositoryInMemory.create({
@@ -63,23 +59,21 @@ describe('CreateOrderUseCase', () => {
     });
 
     const order = await createOrderUseCase.execute({
-      productIds: [product.id],
+      orderProducts: [{ product_id: product.id, quantity: 1 }],
       store_id: store.id,
       user_id: user!.id,
     });
 
-    expect(order).toHaveProperty('id');
-    expect(order.products).toHaveLength(1);
-    expect(order.products[0]).toHaveProperty('id');
+    expect(order).toHaveProperty('orderProducts');
+    expect(order.orderProducts).toHaveLength(1);
+    expect(order.orderProducts[0]).toHaveProperty('product_id');
+    expect(order.orderProducts[0]).toHaveProperty('quantity');
   });
 
   it('should not be able to create an order if the provided user is invalid', async () => {
     const store = await storesRepositoryInMemory.create({
       address: 'Valid address',
-      location: {
-        type: 'Point',
-        coordinates: [123, 456],
-      },
+      coordinates_id: '123',
       delivery_fee: 0,
       delivery_time: 90,
       categories: [],
@@ -87,6 +81,7 @@ describe('CreateOrderUseCase', () => {
       opening_time_weekend: '8-17',
       opening_time_workweek: '8-18',
       user_id: 'invalidUserId',
+      image: 'validImage',
     });
 
     const product = await productsRepositoryInMemory.create({
@@ -100,7 +95,7 @@ describe('CreateOrderUseCase', () => {
 
     await expect(
       createOrderUseCase.execute({
-        productIds: [product.id],
+        orderProducts: [{ product_id: product.id, quantity: 1 }],
         store_id: store.id,
         user_id: 'invalidUserId',
       })
@@ -112,7 +107,6 @@ describe('CreateOrderUseCase', () => {
       full_name: 'Valid name',
       email: 'validemail@email.com',
       password: 'valid-password',
-      avatar: 'http://valid-imgurl.com',
     });
 
     const user = await usersRepositoryInMemory.findByEmail(
@@ -130,7 +124,7 @@ describe('CreateOrderUseCase', () => {
 
     await expect(
       createOrderUseCase.execute({
-        productIds: [product.id],
+        orderProducts: [{ product_id: product.id, quantity: 1 }],
         store_id: 'invalidStoreId',
         user_id: user!.id,
       })

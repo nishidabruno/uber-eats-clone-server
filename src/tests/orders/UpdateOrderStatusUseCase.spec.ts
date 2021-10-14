@@ -1,25 +1,28 @@
 import { AppError } from '@errors/AppError';
 import { OrdersRepositoryInMemory } from '@repositories/in-memory/OrdersRepositoryInMemory';
+import { StoresRepositoryInMemory } from '@repositories/in-memory/StoresRepositoryInMemory';
 import { UsersRepositoryInMemory } from '@repositories/in-memory/UsersRepositoryInMemory';
 import { UpdateOrderStatusUseCase } from '@useCases/orders/UpdateOrderStatusUseCase';
 
 let ordersRepositoryInMemory: OrdersRepositoryInMemory;
 let updateOrderStatusUseCase: UpdateOrderStatusUseCase;
 let usersRepositoryInMemory: UsersRepositoryInMemory;
+let storesRepository: StoresRepositoryInMemory;
 
 describe('UpdateOrderStatusUseCase', () => {
   beforeEach(async () => {
     ordersRepositoryInMemory = new OrdersRepositoryInMemory();
     usersRepositoryInMemory = new UsersRepositoryInMemory();
+    storesRepository = new StoresRepositoryInMemory();
 
     updateOrderStatusUseCase = new UpdateOrderStatusUseCase(
       ordersRepositoryInMemory,
-      usersRepositoryInMemory
+      usersRepositoryInMemory,
+      storesRepository
     );
 
     // SETUP
     await usersRepositoryInMemory.create({
-      avatar: 'Valid avatar',
       email: 'valid@email.com',
       full_name: 'Valid name',
       password: 'valid-password',
@@ -30,7 +33,7 @@ describe('UpdateOrderStatusUseCase', () => {
     const user = await usersRepositoryInMemory.findByEmail('valid@email.com');
 
     const newOrder = await ordersRepositoryInMemory.create({
-      products: [],
+      orderProducts: [],
       store_id: '123',
       user_id: user!.id,
     });
@@ -60,7 +63,7 @@ describe('UpdateOrderStatusUseCase', () => {
 
   it('should not be able to update the order if the provided order id and user id is different', async () => {
     const newOrder = await ordersRepositoryInMemory.create({
-      products: [],
+      orderProducts: [],
       store_id: '123',
       user_id: '123',
     });
@@ -73,7 +76,7 @@ describe('UpdateOrderStatusUseCase', () => {
       })
     ).rejects.toEqual(
       new AppError(
-        'Only the user who made the order can change order status.',
+        'Only the user who made the order or the store can change order status.',
         401
       )
     );

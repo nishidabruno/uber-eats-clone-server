@@ -1,49 +1,54 @@
 import { OrdersRepositoryInMemory } from '@repositories/in-memory/OrdersRepositoryInMemory';
+import { UsersRepositoryInMemory } from '@repositories/in-memory/UsersRepositoryInMemory';
 import { ListOrdersByUserUseCase } from '@useCases/orders/ListOrdersByUserUseCase';
 
 let ordersRepositoryInMemory: OrdersRepositoryInMemory;
 let listOrdersByUserUseCase: ListOrdersByUserUseCase;
+let usersRepository: UsersRepositoryInMemory;
 
 describe('ListOrdersByUserUseCase', () => {
   beforeEach(() => {
     ordersRepositoryInMemory = new OrdersRepositoryInMemory();
+    usersRepository = new UsersRepositoryInMemory();
     listOrdersByUserUseCase = new ListOrdersByUserUseCase(
       ordersRepositoryInMemory
     );
   });
 
   it('should be able to list all orders by user', async () => {
+    usersRepository.create({
+      email: 'valid@email.com',
+      full_name: 'name',
+      password: '123',
+    });
+    const user = await usersRepository.findByEmail('valid@email.com');
+
     await ordersRepositoryInMemory.create({
       store_id: '123',
       user_id: '321',
-      products: [],
+      orderProducts: [],
     });
 
-    await ordersRepositoryInMemory.create({
-      store_id: '123',
-      user_id: '321',
-      products: [],
-    });
+    const orders = await listOrdersByUserUseCase.execute(user!.id);
 
-    const orders = await listOrdersByUserUseCase.execute();
-
-    expect(orders).toHaveLength(2);
+    expect(orders).toHaveLength(1);
     expect(orders[0]).toHaveProperty('store_id');
     expect(orders[0]).toHaveProperty('user_id');
-    expect(orders[0]).toHaveProperty('products');
+    expect(orders[0]).toHaveProperty('orderProducts');
+    expect(orders[0].is_completed).toEqual(false);
   });
 
   it('should be able to list only by open orders', async () => {
     const order = await ordersRepositoryInMemory.create({
       store_id: '123',
       user_id: '321',
-      products: [],
+      orderProducts: [],
     });
 
     await ordersRepositoryInMemory.create({
       store_id: '123',
       user_id: '321',
-      products: [],
+      orderProducts: [],
     });
 
     ordersRepositoryInMemory.updateOrderStatus({
@@ -62,13 +67,13 @@ describe('ListOrdersByUserUseCase', () => {
     const order = await ordersRepositoryInMemory.create({
       store_id: '123',
       user_id: '321',
-      products: [],
+      orderProducts: [],
     });
 
     await ordersRepositoryInMemory.create({
       store_id: '123',
       user_id: '321',
-      products: [],
+      orderProducts: [],
     });
 
     ordersRepositoryInMemory.updateOrderStatus({
