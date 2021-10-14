@@ -1,6 +1,7 @@
-import { IStore } from 'core/entities/IStore';
-import { IStoresRepository } from 'core/repositories/IStoresRepository';
 import { inject, injectable } from 'tsyringe';
+
+import { IStore } from '@entities/IStore';
+import { IStoresRepository } from '@repositories/IStoresRepository';
 
 @injectable()
 class ListStoresUseCase {

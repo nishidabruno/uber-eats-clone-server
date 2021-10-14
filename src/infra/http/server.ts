@@ -1,4 +1,4 @@
-import { createTypeormConnection } from 'config/typeorm';
+import { createTypeormConnection } from '@config/typeorm';
 
 import { app } from './app';
 
