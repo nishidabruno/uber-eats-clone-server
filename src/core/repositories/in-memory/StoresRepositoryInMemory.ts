@@ -31,6 +31,10 @@ class StoresRepositoryInMemory implements IStoresRepository {
   async findByUserId(user_id: string): Promise<IStore | undefined> {
     return this.stores.find((store) => store.user_id === user_id);
   }
+
+  async findByStoreName(storeName: string): Promise<IStore[]> {
+    return this.stores.filter((store) => store.name === storeName);
+  }
 }
 
 export { StoresRepositoryInMemory };

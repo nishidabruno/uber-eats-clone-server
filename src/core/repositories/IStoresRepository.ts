@@ -6,6 +6,7 @@ interface IStoresRepository {
   listAll(): Promise<IStore[]>;
   findById(id: string): Promise<IStore | undefined>;
   findByUserId(user_id: string): Promise<IStore | undefined>;
+  findByStoreName(storeName: string): Promise<IStore[]>;
 }
 
 export { IStoresRepository };

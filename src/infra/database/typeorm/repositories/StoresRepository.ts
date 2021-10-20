@@ -32,6 +32,13 @@ class StoresRepository implements IStoresRepository {
   async findByUserId(user_id: string): Promise<IStore | undefined> {
     return this.repository.findOne({ user_id });
   }
+
+  async findByStoreName(storeName: string): Promise<IStore[]> {
+    return this.repository
+      .createQueryBuilder('stores')
+      .where('LOWER(stores.name) = LOWER(:storeName)', { storeName })
+      .getMany();
+  }
 }
 
 export { StoresRepository };
