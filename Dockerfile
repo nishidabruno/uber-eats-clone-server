@@ -10,4 +10,5 @@ COPY . .
 
 EXPOSE 3333
 
+CMD ["npm", "run", "build"]
 CMD ["npm", "run", "start"]
