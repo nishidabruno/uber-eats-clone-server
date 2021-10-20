@@ -13,7 +13,7 @@ import '@infra/container';
 
 const app = express();
 
-app.use(cors({ origin: ['http://localhost:3000'] }));
+app.use(cors({ origin: [String(process.env.CORS_URL)] }));
 app.use(express.json());
 app.use(express.static(resolve(__dirname, '..', '..', '..', 'tmp')));
 
