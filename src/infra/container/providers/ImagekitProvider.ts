@@ -20,6 +20,7 @@ class ImagekitProvider implements IStorageProvider {
         file,
         fileName,
         folder,
+        useUniqueFileName: false,
       });
     } catch {
       try {
