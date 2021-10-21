@@ -5,26 +5,30 @@ import upload from '@config/multer';
 import { IStorageProvider } from '@providers/IStorageProvider';
 
 class LocalStorageProvider implements IStorageProvider {
-  async save(file: string, folder: string): Promise<string> {
-    await promises.rename(
-      resolve(upload.tmpFolder, file),
-      resolve(`${upload.tmpFolder}/${folder}`, file)
-    );
+  async save(fileName: string, folder: string): Promise<void> {
+    try {
+      await promises.stat(resolve(upload.tmpFolder, folder));
+    } catch {
+      await promises.mkdir(resolve(upload.tmpFolder, folder));
+    }
 
-    return file;
+    await promises.rename(
+      resolve(upload.tmpFolder, fileName),
+      resolve(`${upload.tmpFolder}/${folder}`, fileName)
+    );
   }
 
-  async delete(file: string, folder: string): Promise<void> {
-    const fileName = resolve(`${upload.tmpFolder}/${folder}`, file);
+  async delete(fileName: string, folder: string): Promise<void> {
+    const filePath = resolve(`${upload.tmpFolder}/${folder}`, fileName);
 
     // Only delete the file if it still on tmp folder
     try {
-      await promises.stat(fileName);
+      await promises.stat(filePath);
     } catch {
       return;
     }
 
-    await promises.unlink(fileName);
+    await promises.unlink(filePath);
   }
 }
 

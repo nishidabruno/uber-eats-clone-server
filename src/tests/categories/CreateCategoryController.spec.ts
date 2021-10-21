@@ -2,6 +2,7 @@ import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
+import upload from '@config/multer';
 import { createTypeormConnection } from '@config/typeorm';
 import { app } from '@infra/http/app';
 
@@ -18,15 +19,7 @@ describe('CreateCategoryController', () => {
     await connection.close();
   });
 
-  const imagePath = path.resolve(
-    __dirname,
-    '..',
-    '..',
-    '..',
-    'tmp',
-    'products',
-    'mc_fish.jpg'
-  );
+  const imagePath = path.resolve(upload.tmpFolder, 'test_image.jpg');
 
   it('should be able to create a new category', async () => {
     const response = await request(app)

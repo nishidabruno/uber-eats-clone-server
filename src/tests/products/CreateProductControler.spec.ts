@@ -2,6 +2,7 @@ import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
+import upload from '@config/multer';
 import { createTypeormConnection } from '@config/typeorm';
 import { HashProvider } from '@infra/container/providers/HashProvider';
 import { TokenProvider } from '@infra/container/providers/TokenProvider';
@@ -75,21 +76,12 @@ describe('CreateProductController', () => {
       password: 'valid-password',
     });
 
+    const imagePath = path.resolve(upload.tmpFolder, 'test_image.jpg');
+
     const response = await request(app)
       .post('/products')
       .set({ Authorization: `Bearer ${token}` })
-      .attach(
-        'image',
-        path.resolve(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          'tmp',
-          'products',
-          'mc_fish.jpg'
-        )
-      )
+      .attach('image', imagePath)
       .field('name', 'Valid name')
       .field('description', 'Valid description')
       .field('store_id', store.id)

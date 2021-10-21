@@ -2,6 +2,7 @@ import path from 'path';
 import request from 'supertest';
 import { Connection } from 'typeorm';
 
+import upload from '@config/multer';
 import { createTypeormConnection } from '@config/typeorm';
 import { HashProvider } from '@infra/container/providers/HashProvider';
 import { TokenProvider } from '@infra/container/providers/TokenProvider';
@@ -58,15 +59,7 @@ describe('CreateStoreController', () => {
       password: 'valid-password',
     });
 
-    const imagePath = path.resolve(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'tmp',
-      'products',
-      'mc_fish.jpg'
-    );
+    const imagePath = path.resolve(upload.tmpFolder, 'test_image.jpg');
     const jsonCoordinates = JSON.stringify({
       longitude: 35.6847875,
       latitude: 139.710875,

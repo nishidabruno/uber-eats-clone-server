@@ -1,6 +1,6 @@
 interface IStorageProvider {
-  save(file: string, folder: string): Promise<string>;
-  delete(file: string, folder: string): Promise<void>;
+  save(fileName: string, folder: string): Promise<void>;
+  delete(fileName: string, folder: string): Promise<void>;
 }
 
 export { IStorageProvider };
