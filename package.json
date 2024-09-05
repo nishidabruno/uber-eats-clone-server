@@ -8,6 +8,7 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules --respawn src/infra/http/server.ts",
     "start": "node dist/infra/http/server.js",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli",
+    "migrate": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli migration:run --config ./ormconfig.js",
     "test": "NODE_ENV=test jest --runInBand"
   },
   "dependencies": {
